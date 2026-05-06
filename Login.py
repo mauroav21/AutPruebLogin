@@ -8,17 +8,7 @@ from selenium.webdriver.edge.service import Service
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-def procesar_encuesta(driver):
-    """
-    Aquí colocas toda la lógica que ya tenías para navegar por 
-    las preguntas, hacer clic en '5' y dar en 'Continuar'.
-    """
-    # (Mantén aquí tu bucle 'while True' y la lógica de los paneles que ya escribiste)
-    print("Ejecutando lógica de encuesta...")
-    time.sleep(2) # Simulación
-
 def iniciar_automatizacion():
-    # 1. Seleccionar el archivo TXT
     ruta_archivo = filedialog.askopenfilename(
         title="Seleccionar archivo de usuarios",
         filetypes=(("Archivos de texto", "*.txt"), ("Todos los archivos", "*.*"))
@@ -27,7 +17,12 @@ def iniciar_automatizacion():
     if not ruta_archivo:
         return
 
-    # 2. Configuración del Driver
+    # 1. CREAR CARPETA DE EVIDENCIAS si no existe
+    folder_evidencias = "evidencias_login"
+    if not os.path.exists(folder_evidencias):
+        os.makedirs(folder_evidencias)
+
+    # 2. Configuración del Driver (Asegúrate de que esta ruta sea correcta)
     edge_driver_path = r'C:\dedge\msedgedriver.exe'
     service = Service(executable_path=edge_driver_path)
     driver = None
@@ -44,52 +39,63 @@ def iniciar_automatizacion():
                 continue
             
             usuario, contrasena = linea.split(',')
-            print(f"[{num}] Procesando: {usuario}")
+            print(f"[{num}] Probando login para: {usuario}")
 
-            # Ir al login local
-            driver.get("http://localhost:4200/login")
+            try:
+                driver.get("http://localhost:4200/login")
+                wait = WebDriverWait(driver, 10)
+                
+                # Interacción con los elementos identificados
+                campo_user = wait.until(EC.presence_of_element_located((By.ID, "email")))
+                campo_user.clear()
+                campo_user.send_keys(usuario)
 
-            # Login con los nuevos IDs
-            wait = WebDriverWait(driver, 15)
-            
-            campo_user = wait.until(EC.presence_of_element_located((By.ID, "email")))
-            campo_user.clear()
-            campo_user.send_keys(usuario)
+                campo_pwd = driver.find_element(By.ID, 'password')
+                campo_pwd.clear()
+                campo_pwd.send_keys(contrasena)
 
-            campo_pwd = driver.find_element(By.ID, 'password')
-            campo_pwd.clear()
-            campo_pwd.send_keys(contrasena)
+                boton_login = driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
+                boton_login.click()
 
-            # Si el botón no tiene ID, lo buscamos por el tipo submit o clase
-            boton_login = driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
-            boton_login.click()
+                # Espera para que cargue la respuesta
+                time.sleep(2)
 
-            # --- Lógica de la encuesta ---
-            # Llamamos a la función que procesa las preguntas
-            procesar_encuesta(driver)
-            
-            # Limpiar sesión para el siguiente usuario
-            driver.delete_all_cookies()
-            print(f"Usuario {usuario} finalizado.\n")
+                # 3. GENERAR CAPTURA DE PANTALLA (Evidencia)
+                nombre_foto = f"evidencia_{usuario}_{int(time.time())}.png"
+                ruta_foto = os.path.join(folder_evidencias, nombre_foto)
+                driver.save_screenshot(ruta_foto)
+                print(f"Captura guardada: {nombre_foto}")
 
-        messagebox.showinfo("Proceso Completo", "Se han procesado todos los usuarios del archivo.")
+                driver.delete_all_cookies()
+
+            except Exception as error_usuario:
+                print(f"Error con usuario {usuario}: {error_usuario}")
+                # Captura de pantalla del fallo para el reporte
+                driver.save_screenshot(os.path.join(folder_evidencias, f"ERROR_{usuario}.png"))
+                continue
+
+        messagebox.showinfo("Proceso Completo", f"Pruebas finalizadas.\nRevisa la carpeta: {folder_evidencias}")
 
     except Exception as e:
-        messagebox.showerror("Error", f"Ocurrió un error: {e}")
+        messagebox.showerror("Error General", f"Ocurrió un error: {e}")
     finally:
         if driver:
             driver.quit()
 
-# --- Interfaz Gráfica Minimalista ---
+# --- Interfaz Gráfica Corregida ---
 ventana = tk.Tk()
-ventana.title("Selenium Multi-User")
+ventana.title("autprueb login")
 ventana.geometry("350x200")
 ventana.configure(bg="#f0f4f7")
+
+style = ttk.Style()
+style.configure("TFrame", background="#f0f4f7")
+style.configure("TLabel", background="#f0f4f7", font=("Segoe UI", 11))
 
 frame = ttk.Frame(ventana, padding=30)
 frame.pack(expand=True)
 
-ttk.Label(frame, text="Automatización de Encuestas", font=("Segoe UI", 12, "bold")).pack(pady=10)
-ttk.Button(frame, text="Cargar TXT e Iniciar", command=iniciar_automatizacion).pack(pady=20)
+ttk.Label(frame, text="autprueb login", font=("Segoe UI", 14, "bold")).pack(pady=10)
+ttk.Button(frame, text="Cargar Usuarios e Iniciar", command=iniciar_automatizacion).pack(pady=20)
 
 ventana.mainloop()
