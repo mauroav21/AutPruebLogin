@@ -1,0 +1,4 @@
+--- NUEVA SESIÓN DE PRUEBAS: 2026-05-05 18:18:37 ---
+[2026-05-05 18:18:42] USUARIO: admin@prueba.com | RESULTADO: ÉXITO | Acceso concedido. Redirección exitosa.
+[2026-05-05 18:18:48] USUARIO: error@prueba.com | RESULTADO: ACCESO DENEGADO | Credenciales inválidas o falta de redirección.
+[2026-05-05 18:18:51] USUARIO: agente@prueba.com | RESULTADO: ÉXITO | Acceso concedido. Redirección exitosa.
