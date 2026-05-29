@@ -13,7 +13,7 @@ jobs:
     
     steps:
       - name: Checkout AutPruebLogin
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Setup Python with uv
         uses: astral-sh/setup-uv@v2
@@ -23,7 +23,7 @@ jobs:
       
       # Clone and start backend
       - name: Checkout backend
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: Tar-Mairon24/DS-backend
           path: ../backend
@@ -37,7 +37,7 @@ jobs:
       
       # Clone and start frontend
       - name: Checkout frontend
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: Tar-Mairon24/DS-Frontend
           path: ../frontend
@@ -70,7 +70,7 @@ jobs:
       
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: |
