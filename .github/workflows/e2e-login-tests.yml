@@ -100,7 +100,7 @@ jobs:
       - name: Start frontend services
         run: |
           cd frontend
-          docker-compose up -d
+          docker compose up -d
           echo "Waiting for frontend to be ready..."
           sleep 15
       
