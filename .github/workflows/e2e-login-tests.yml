@@ -1,0 +1,85 @@
+name: E2E Login Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout AutPruebLogin
+        uses: actions/checkout@v3
+      
+      - name: Setup Python with uv
+        uses: astral-sh/setup-uv@v2
+      
+      - name: Install dependencies
+        run: uv sync
+      
+      # Clone and start backend
+      - name: Checkout backend
+        uses: actions/checkout@v3
+        with:
+          repository: mauroav21/backend-repo
+          path: ../backend
+      
+      - name: Start backend services
+        run: |
+          cd ../backend
+          docker-compose up -d
+          echo "Waiting for backend to be ready..."
+          sleep 15
+      
+      # Clone and start frontend
+      - name: Checkout frontend
+        uses: actions/checkout@v3
+        with:
+          repository: mauroav21/frontend-repo  # Change this to your actual frontend repo
+          path: ../frontend
+      
+      - name: Start frontend services
+        run: |
+          cd ../frontend
+          docker-compose up -d
+          echo "Waiting for frontend to be ready..."
+          sleep 15
+      
+      - name: Create users test file
+        run: |
+          cat > usuarios.txt << EOF
+          testuser@example.com,password123
+          admin@example.com,admin123
+          EOF
+      
+      - name: Run E2E Login Tests
+        run: uv run python Login.py usuarios.txt
+        continue-on-error: true
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: |
+            reporte_pruebas.log
+            evidencias_login/
+          retention-days: 30
+      
+      # Show test results summary
+      - name: Display test summary
+        if: always()
+        run: |
+          echo "=== TEST RESULTS ==="
+          cat reporte_pruebas.log || echo "No log file found"
+      
+      # Cleanup
+      - name: Stop containers
+        if: always()
+        run: |
+          docker-compose -f ../backend/docker-compose.yml down || true
+          docker-compose -f ../frontend/docker-compose.yml down || true
