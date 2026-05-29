@@ -26,11 +26,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Tar-Mairon24/DS-backend
-          path: ../backend
+          path: backend
       
       - name: Start backend services and setup database
         run: |
-          cd ../backend
+          cd backend
           make create-backend
           echo "Backend and database ready"
           sleep 5
@@ -40,11 +40,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Tar-Mairon24/DS-Frontend
-          path: ../frontend
+          path: frontend
       
       - name: Start frontend services
         run: |
-          cd ../frontend
+          cd frontend
           docker-compose up -d
           echo "Waiting for frontend to be ready..."
           sleep 15
@@ -89,5 +89,5 @@ jobs:
       - name: Stop containers
         if: always()
         run: |
-          docker-compose -f ../backend/docker-compose.yml down || true
-          docker-compose -f ../frontend/docker-compose.yml down || true
+          docker-compose -f backend/docker-compose.yml down || true
+          docker-compose -f frontend/docker-compose.yml down || true
