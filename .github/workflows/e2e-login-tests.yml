@@ -28,6 +28,53 @@ jobs:
           repository: Tar-Mairon24/DS-backend
           path: backend
       
+      - name: Create backend .env file
+        env:
+          DB_USER: ${{ secrets.BACKEND_DB_USER }}
+          DB_PASSWORD: ${{ secrets.BACKEND_DB_PASSWORD }}
+          DB_HOST: localhost
+          DB_PORT: 3307
+          DB_NAME: ${{ secrets.BACKEND_DB_NAME }}
+          DB_SSLMODE: disable
+          SERVER_PORT: 8080
+          SERVER_TIMEZONE: America/Monterrey
+          JWT_SECRET: ${{ secrets.BACKEND_JWT_SECRET }}
+          JWT_EXPIRATION_MINUTES: 15
+          SMTP_USER: ${{ secrets.BACKEND_SMTP_USER }}
+          SMTP_PASS: ${{ secrets.BACKEND_SMTP_PASS }}
+          USER1_EMAIL: ${{ secrets.BACKEND_USER1_EMAIL }}
+          USER1_NAME: Admin
+          USER1_PASSWORD: ${{ secrets.BACKEND_USER1_PASSWORD }}
+          USER2_EMAIL: ${{ secrets.BACKEND_USER2_EMAIL }}
+          USER2_NAME: Agente
+          USER2_PASSWORD: ${{ secrets.BACKEND_USER2_PASSWORD }}
+        run: |
+          cat > backend/.env << EOF
+          # Database Configuration
+          DB_USER=$DB_USER
+          DB_PASSWORD=$DB_PASSWORD
+          DB_NAME=$DB_NAME
+          DB_HOST=$DB_HOST
+          DB_PORT=$DB_PORT
+          DB_SSLMODE=$DB_SSLMODE
+          # Server Configuration
+          SERVER_PORT=$SERVER_PORT
+          SERVER_TIMEZONE=$SERVER_TIMEZONE
+          # JWT Configuration
+          JWT_SECRET=$JWT_SECRET
+          JWT_EXPIRATION_MINUTES=$JWT_EXPIRATION_MINUTES
+          # Email Configuration
+          SMTP_USER=$SMTP_USER
+          SMTP_PASS=$SMTP_PASS
+          # User Seeding
+          USER1_EMAIL=$USER1_EMAIL
+          USER1_NAME=$USER1_NAME
+          USER1_PASSWORD=$USER1_PASSWORD
+          USER2_EMAIL=$USER2_EMAIL
+          USER2_NAME=$USER2_NAME
+          USER2_PASSWORD=$USER2_PASSWORD
+          EOF
+      
       - name: Start backend services and setup database
         run: |
           cd backend
