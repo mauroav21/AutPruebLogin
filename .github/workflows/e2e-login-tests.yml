@@ -76,7 +76,7 @@ jobs:
           EOF
       
       - name: Create Docker network
-        run: docker network create ds-network || true
+        run: docker network create ds_network || true
       
       - name: Start backend services and setup database
         run: |
