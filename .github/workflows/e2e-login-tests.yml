@@ -144,5 +144,5 @@ jobs:
       - name: Stop containers
         if: always()
         run: |
-          docker-compose -f backend/docker-compose.yml down || true
-          docker-compose -f frontend/docker-compose.yml down || true
+          docker compose -f backend/compose.yml down || true
+          docker compose -f frontend/compose.yml down || true
