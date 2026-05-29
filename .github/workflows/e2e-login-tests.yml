@@ -75,6 +75,9 @@ jobs:
           USER2_PASSWORD=$USER2_PASSWORD
           EOF
       
+      - name: Create Docker network
+        run: docker network create ds-network || true
+      
       - name: Start backend services and setup database
         run: |
           cd backend
