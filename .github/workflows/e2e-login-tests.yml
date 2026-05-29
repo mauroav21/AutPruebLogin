@@ -25,21 +25,21 @@ jobs:
       - name: Checkout backend
         uses: actions/checkout@v3
         with:
-          repository: mauroav21/backend-repo
+          repository: Tar-Mairon24/DS-backend
           path: ../backend
       
-      - name: Start backend services
+      - name: Start backend services and setup database
         run: |
           cd ../backend
-          docker-compose up -d
-          echo "Waiting for backend to be ready..."
-          sleep 15
+          make create-backend
+          echo "Backend and database ready"
+          sleep 5
       
       # Clone and start frontend
       - name: Checkout frontend
         uses: actions/checkout@v3
         with:
-          repository: mauroav21/frontend-repo  # Change this to your actual frontend repo
+          repository: Tar-Mairon24/DS-Frontend
           path: ../frontend
       
       - name: Start frontend services
@@ -50,10 +50,18 @@ jobs:
           sleep 15
       
       - name: Create users test file
+        env:
+          TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+          TEST_USER2_EMAIL: ${{ secrets.TEST_USER2_EMAIL }}
+          TEST_USER2_PASSWORD: ${{ secrets.TEST_USER2_PASSWORD }}
+          TEST_USER3_EMAIL: ${{ secrets.TEST_USER3_EMAIL }}
+          TEST_USER3_PASSWORD: ${{ secrets.TEST_USER3_PASSWORD }}
         run: |
           cat > usuarios.txt << EOF
-          testuser@example.com,password123
-          admin@example.com,admin123
+          $TEST_USER_EMAIL,$TEST_USER_PASSWORD
+          $TEST_USER2_EMAIL,$TEST_USER2_PASSWORD
+          $TEST_USER3_EMAIL,$TEST_USER3_PASSWORD
           EOF
       
       - name: Run E2E Login Tests
