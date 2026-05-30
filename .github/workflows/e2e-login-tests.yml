@@ -6,6 +6,7 @@ on:
   pull_request:
     branches: [ main ]
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   test:
@@ -75,13 +76,13 @@ jobs:
           USER2_PASSWORD=$USER2_PASSWORD
           EOF
       
-      - name: Create Docker network
-        run: docker network create ds_network || true
-      
       - name: Install migrate tool
         run: |
           curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.1/migrate.linux-amd64.tar.gz | tar xvz
-          sudo mv migrate /usr/local/bin/
+          mkdir -p ~/go/bin
+          mv migrate ~/go/bin/
+          chmod +x ~/go/bin/migrate
+          echo "$HOME/go/bin" >> $GITHUB_PATH
       
       - name: Start backend services and setup database
         run: |
