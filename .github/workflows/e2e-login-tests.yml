@@ -24,6 +24,7 @@ jobs:
       
       - name: Install dependencies
         run: uv sync
+        working-directory: ${{ github.workspace }}
       
       # Clone and start backend
       - name: Checkout backend
