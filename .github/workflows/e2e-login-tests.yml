@@ -15,6 +15,9 @@ jobs:
     steps:
       - name: Checkout AutPruebLogin
         uses: actions/checkout@v4
+        with:
+          repository: mauroav21/AutPruebLogin
+          ref: main
       
       - name: Setup Python with uv
         uses: astral-sh/setup-uv@v2
