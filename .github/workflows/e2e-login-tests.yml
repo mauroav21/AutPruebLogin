@@ -7,6 +7,39 @@ on:
     branches: [ main ]
   workflow_dispatch:
   workflow_call:
+    secrets:
+      BACKEND_DB_USER:
+        required: true
+      BACKEND_DB_PASSWORD:
+        required: true
+      BACKEND_DB_NAME:
+        required: true
+      BACKEND_JWT_SECRET:
+        required: true
+      BACKEND_SMTP_USER:
+        required: true
+      BACKEND_SMTP_PASS:
+        required: true
+      BACKEND_USER1_EMAIL:
+        required: true
+      BACKEND_USER1_PASSWORD:
+        required: true
+      BACKEND_USER2_EMAIL:
+        required: true
+      BACKEND_USER2_PASSWORD:
+        required: true
+      TEST_USER_EMAIL:
+        required: true
+      TEST_USER_PASSWORD:
+        required: true
+      TEST_USER2_EMAIL:
+        required: true
+      TEST_USER2_PASSWORD:
+        required: true
+      TEST_USER3_EMAIL:
+        required: true
+      TEST_USER3_PASSWORD:
+        required: true
 
 jobs:
   test:
